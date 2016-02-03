@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+	http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	id="WebApp_ID" version="2.5">
+	
+  <display-name>OTV_JSF_PrimeFaces_Spring_Hibernate</display-name>
+  
+  <!--   CONFIGURACION DEL CONTEXTO DE LA APLICACION EN SPRING Y TAMBIEN BASE DE DATOS E HIBERNATE -->
+  <context-param>
+    <param-name>contextConfigLocation</param-name>
+    <param-value>/WEB-INF/spring-config.xml</param-value>
+  </context-param>
+  
+  <!-- ESCUCHAS -->
+  <listener>
+    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
+  <listener>
+    <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
+  </listener>
+  
+  <!-- NO SE PARA QUE SIRVE ESTO -->
+  <context-param>
+    <param-name>javax.faces.PROJECT_STAGE</param-name>
+    <param-value>Development</param-value>
+  </context-param>
+    
+	<!-- ARCHIVO DE BIENVENIDA -->
+  <welcome-file-list>
+    <welcome-file>/pages/index.xhtml</welcome-file>
+  </welcome-file-list>
+  
+  	
+	<!-- ************************** SERVLET WIKI *******************************************
+		El servlet es una clase Java, utilizada para ampliar las capacidades de un servidor.
+		Son utilizados comúnmente para extender las aplicaciones alojadas por servidores web.
+	
+		La idea es que sean applets (pequeños programas que se ejecutan en el contexto de un navegador web)
+		de Java que se ejecutan en servidores en vez de navegadores web.
+		
+		Este tipo de servlets son la versión java de PHP.
+	
+		El uso más común de los servlets es generar páginas web de forma dinámica
+		a partir de los parámetros de la petición que envíe el navegador web. 
+	-->
+  
+	<!-- Controlador de JSF para servlets -->  
+	<servlet>
+	  <servlet-name>Faces Servlet</servlet-name>
+	  <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
+      <!-- arranca al iniciar tomcat -->
+	  <load-on-startup>1</load-on-startup>
+	</servlet>
+	 
+	<!-- MAPEO, quiere decir que Faces Servlet
+		 entra en acción cuando se usa ese patron en la petición url -->
+	<servlet-mapping>
+	  <servlet-name>Faces Servlet</servlet-name>
+	    <url-pattern>*.jsf</url-pattern>
+		<url-pattern>*.xhtml</url-pattern>
+	</servlet-mapping>
+	
+	<servlet-mapping>
+	  <servlet-name>Faces Servlet</servlet-name>
+	  <url-pattern>*.faces</url-pattern>
+	</servlet-mapping>
+	
+	<!-- Controlador de spring para servlets CONFIGURADO EN UNA CLASE MIA-->
+	<servlet>
+		<servlet-name>DispatchedServlet</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		    <init-param>
+		      <param-name>contextClass</param-name>
+		      <param-value>org.springframework.web.context.support.AnnotationConfigWebApplicationContext</param-value>
+		    </init-param>
+			<init-param>
+				<!--  parametro que indica donde esta el xml que configura este servlet -->
+		        <param-name>contextConfigLocation</param-name>
+		        <param-value>com.otv.springDispatchedConfig</param-value>
+<!-- 		        <param-value>/WEB-INF/dispatched-config.xml</param-value> -->
+		    </init-param>
+		<!-- arranca al iniciar tomcat -->
+		<load-on-startup>1</load-on-startup>		
+	</servlet>
+		
+	<!-- MAPEO, quiere decir que dispatcher servlet
+		 entra en acción cuando se usa ese patron en la petición url -->
+	<servlet-mapping>
+		<servlet-name>DispatchedServlet</servlet-name>
+		<url-pattern>/</url-pattern>		
+	</servlet-mapping>
+	
+</web-app>

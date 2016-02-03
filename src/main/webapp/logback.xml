@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+<!-- configuración de como se va a mostrar el log por archivo -->
+	<appender name="fileAppender" class="ch.qos.logback.core.FileAppender">
+		<file>${user.home}/Google Drive/Curso spring/logs/prime_spring_hibernate.log</file>
+		<append>true</append>
+		<encoder>
+			<pattern>%d [%thread] %-5level %logger{35} - %msg%n</pattern>
+		</encoder>
+	</appender>
+
+<!-- configuración de como se va a mostrar el log por consola -->
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
+			</pattern>
+		</encoder>
+	</appender>
+
+<!-- configuración de que paquete logeamos, a que nivel, y en que appender, en este caso va al archivo log -->
+	<logger name="com.otv.controller.backingBeans">
+		<level value="TRACE" />
+		<appender-ref ref="fileAppender" />
+	</logger>
+	
+<!-- configuración de que paquete logeamos, a que nivel, y en que appender, en este caso va a la consola -->
+	<logger name="org.hibernate">
+		<level value="WARN" />
+		<appender-ref ref="STDOUT" />
+	</logger>
+	
+<!-- configuración del log por defecto, a que nivel, y en que appender, en este caso va a la consola -->
+	<root level="WARN">
+		<appender-ref ref="STDOUT" />
+	</root>
+</configuration>

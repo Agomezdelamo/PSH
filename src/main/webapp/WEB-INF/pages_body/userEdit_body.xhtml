@@ -1,0 +1,45 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui">
+ <h:body>
+     <h:form>      
+	     <table> 
+		     <tr>
+		     	<td><h:outputLabel for="name" value="Name : " /></td>
+		     	<td><p:inputText id="name" value="#{userEditBean.usuarioCommand.name}">
+		     			<f:validateLength minimum="5" /> 
+		     			<p:ajax event="blur" update="nameMsg" />
+		     		</p:inputText>
+		     		<p:message id="nameMsg" for="name" display="icon"/> 
+		     	</td>
+		     </tr>
+		     <tr>
+		     	<td><h:outputLabel for="surname" value="Surname : " /></td>   
+		     	<td><p:inputText id="surname" value="#{userEditBean.usuarioCommand.surname}"> 
+		     			<f:validateLength minimum="5" /> 
+		     			<p:ajax event="blur" update="surnameMsg" />  
+		     		</p:inputText>
+		     		<p:message id="surnameMsg" for="surname" display="icon"/> 
+		     	</td>    
+		     </tr>            
+		     <tr>
+		     	<td><h:outputLabel for="dni" value="Dni : " /></td>   
+		     	<td>
+		     	<p:inputText id="dni" value="#{userEditBean.usuarioCommand.dni}">
+<!-- 		     			<f:converter converterId="javax.faces.Integer"/> -->
+		     		    <p:ajax event="blur" update="idMsg" />
+		     		</p:inputText>
+		     		<p:message id="idMsg" for="dni" display="icon"/> 
+		     	</td>    
+		     </tr>            
+	         <tr>
+		     	<td><p:commandButton id="updateUser" value="update" action="#{userEditBean.updateUser()}" /></td>
+		     	<td><p:commandButton id="reset" value="Reset" action="#{userNewBean.reset}" /></td>
+		     </tr>   
+	     </table>
+     </h:form>      
+</h:body>
+</ui:composition>

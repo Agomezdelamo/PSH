@@ -1,0 +1,116 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:body>
+
+sdfagdagfasdgfdgdfddasdagsdfgsdfsdgfsdfg
+
+<h:form id="formList_1">
+		<!-- que es ajax false -->
+		<p:commandButton id="goadd" value="añadir" action="#{userListBean.addUser}" style="display: block;"/>
+	
+		<h:outputText value="USERs : "></h:outputText>
+		<p:dataTable id="users" var="user" value="#{userListBean.userList}" style="width: 10%">
+			<p:column>
+				<f:facet name="header">
+					<h:outputText value="ID" />
+				</f:facet>
+				<h:outputText value="#{user.id}" />
+			</p:column>
+			<p:column>
+				<f:facet name="header">
+					<h:outputText value="Name" />
+				</f:facet>
+				<h:outputText value="#{user.name}" />
+			</p:column>
+			<p:column>
+				<f:facet name="header">
+					<h:outputText value="Surname" />
+				</f:facet>
+				<h:outputText value="#{user.surname}" />
+			</p:column>
+			<p:column>
+				<p:commandButton id="edit" value="editar"
+					action="#{userListBean.editUser(user)}"
+					/>
+			</p:column>
+			<p:column>
+<!-- 				le pongo un actionlistener a este boton, 
+					se ejecuta primero el diálogo que muestra porque tiene un -->
+<!-- 				actión y luego el action listener.
+
+					después hago un update diálogo llamandolo por su id.
+					si el componente al que se llama por el id esta fuera del formulario deberia llevar 2 puntos.
+					
+					ajax: false solo se utiliza para inutilizar las peticiones ajax.
+ -->
+				<p:commandButton id="delete" value="borrar" 
+					actionListener="#{userListBean.initRemoveUser(user)}" 
+					oncomplete="hbDialogRemoveUser.show()" 
+					update=":modalDialog_deleteConfirmUserForm_1"/>
+			</p:column>
+		</p:dataTable>
+		
+
+	
+
+<!-- 	Ejemplo de un Converter -->
+	<h:selectOneMenu id="selectUser" converter="userConverter"  value="#{userListBean.userForSelectOneMenu}">
+<!-- 		valor por defecto cuando cambias -->
+		<f:selectItem  itemValue="" itemLabel="#{userListBean.emptyUser}" />
+		<f:selectItems  value="#{userListBean.userList}" var="user" itemLabel="#{user.name}" />
+<!-- 		el evento ajax indica el evento que marca el momento de ir al servidor -->
+		<p:ajax event="change" update="userConverterPanel selectUser"/>
+	</h:selectOneMenu>
+	
+<!-- 	process: enviar al servidor algo en concreto, si no se pone nada manda todo el formulario, y si no indicas una parte. -->
+<!-- 	update: actauliza lo que hay en el servidor. -->
+<!--     <p:commandButton value="Mostrar datos" process="@this" update="@form" /> -->
+      <h:panelGrid columns="4" border="2" id="userConverterPanel">
+          <h:outputText value="Identificación"/>
+          <h:outputText value="dni"/>
+          <h:outputText value="Nombres"/>
+          <h:outputText value="Apellidos"/>
+          <h:outputText value="#{userListBean.userForSelectOneMenu.id}"/>
+          <h:outputText value="#{userListBean.userForSelectOneMenu.dni}"/>
+          <h:outputText value="#{userListBean.userForSelectOneMenu.name}"/>
+          <h:outputText value="#{userListBean.userForSelectOneMenu.surname}"/>
+
+      </h:panelGrid>      
+</h:form>
+	
+	
+		<p:dialog id="modalDialog_deleteConfirmUserForm_1" dynamic="true" modal="true"
+			resizable="false" draggable="false" header="Diálogo borrar"
+			widgetVar="hbDialogRemoveUser">
+			<h:form>
+				<p:outputPanel id="deleteConfirmPanel_1">
+						<p:panel>
+							<h:outputText value="Estas seguro de querer borrar a #{user.name()} ?" />
+						</p:panel>
+						<h:panelGrid columns="2">
+							<!-- DELETE
+								udate @all actualiza la vista entera, en este caso me muestra la tabla con los datos
+								nuevos de la db, se puede usar id para actualizar solo ciertas partes de la vista con peticiones
+								ajax.-->
+								
+						<!-- onComplete tiro de la widget var para cerrar el diálogo. -->
+							<p:commandButton
+								action="#{userListBean.remove}" 
+								update="@all" 
+								oncomplete="hbDialogRemoveUser.hide()" 
+								value="Borrar"/>
+							
+							<!-- CANCEL -->
+							<p:commandButton
+								oncomplete="dialogRemoveUser.hide()" value="cancelar" update=":formList_1"/>
+						</h:panelGrid>
+				</p:outputPanel>
+			</h:form>
+		</p:dialog>
+</h:body>
+</ui:composition>

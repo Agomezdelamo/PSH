@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<faces-config
+    xmlns="http://java.sun.com/xml/ns/javaee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
+    http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd"
+    version="2.0">
+  	
+<!--   	PAQUETE PARA LOG DEL CICLO DE VIDA JSF -->
+ 	<lifecycle>
+		<phase-listener>com.mitocode.listeners.FaseListener</phase-listener>
+	</lifecycle>
+	
+ 	<!-- 
+ 	De esta menera estamos activando el soporte de Spring para la inyección de dependencias
+	de tal forma que JSF sabrá que si no encuentra un bean bajo su contexto debe ir a buscarlo
+	al contexto de Spring. Esto supone una gran ventaja en determinadas situaciones como veremos
+	a continuación. 
+	 -->
+  	<!-- JSF and Spring are integrated -->
+  	
+  	
+  	<application>
+    	<el-resolver>org.springframework.web.jsf.el.SpringBeanFacesELResolver</el-resolver>
+    	
+    	<resource-handler>org.omnifaces.resourcehandler.CombinedResourceHandler</resource-handler>
+  	</application>
+  	
+
+	
+	
+	<!-- CONFIGURACIÓN DE REGLAS DE NAVEGACIÓN (NO LAS ESTOY USANDO, ESTOY REDIGIRIENDO EN JAVA CON FACESCONTEXT)-->	
+<!--     from-action → Un método de acción que devuelve un String, que se compara con la cadena definida en “from-otucome”, si los valores son iguales, nos moveríamos a la vista “to-view-id”. -->
+<!--     from-outcome → Este valor se compara con “form-action” si se ha definido, o con el atributo “action” del “commandButton” o del “commandLink” que lance el evento. -->
+<!--     to-view-id → La página de destino -->
+	<navigation-rule>
+	    <navigation-case>
+	        <from-outcome>userList</from-outcome>
+            <to-view-id>/pages/userList_body.xhtml</to-view-id>
+<!--         con esta opción le digo que al pasar la clave from-outcome "userlist" además de hacer la peticion ajax,
+             rediriga en la request el path -->
+             <redirect />
+        </navigation-case>
+        
+	    <navigation-case>
+	        <from-outcome>userEdit</from-outcome>
+	        <to-view-id>/pages/userEdit_body.xhtml</to-view-id>
+	        <redirect/>
+	    </navigation-case>
+	    
+         <navigation-case>
+	        <from-outcome>error</from-outcome>
+            <to-view-id>/pages/error.xhtml</to-view-id>
+        </navigation-case>
+    </navigation-rule>
+    
+</faces-config>

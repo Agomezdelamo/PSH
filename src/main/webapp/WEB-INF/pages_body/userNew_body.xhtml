@@ -1,0 +1,53 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui">
+ <h:body>
+<!--  URL -->
+<!--  http://localhost:8080/Prime_Spring_Hibernate/pages/userNew_body.jsf -->
+
+<!--
+	consulta en la base de datos
+	CREATE TABLE usuario (
+		id int IDENTITY(1,1) NOT NULL,
+		name varchar(45) NOT NULL,
+		surname varchar(45) NOT NULL,
+		PRIMARY KEY ("id")
+	);
+ -->
+ 
+     <h:form id="formAdd">      
+	     <table> 
+		     <tr>
+		     	<td><h:outputLabel for="name" value="Name : " /></td>
+		     	<td>
+					<!-- el atributo required true valida en la fase 3 de forma autómatica -->
+		     		<p:inputText id="name" value="#{userNewBean.usuarioCommand.name}" required="true" />
+		     		<p:message id="nameMsg" for="name"/> 
+		     	</td>
+		     </tr>
+		     <tr>
+		     	<td><h:outputLabel for="surname" value="Surname : " /></td>   
+		     	<td><p:inputText id="surname" value="#{userNewBean.usuarioCommand.surname}"/>
+		     	<p:message id="surnameMsg"  for="surname"/> 
+		     	</td>    
+		     </tr>            
+		     <tr>
+		     	<td><h:outputLabel for="dni" value="Dni : " /></td>   
+		     	<td>
+					<!-- con required=true le obligo a que valide en fase de validación 3, y con validator pasa por ese bean en esa fase. -->
+		     		<p:inputText id="dni" value="#{userNewBean.usuarioCommand.dni}" validator="userNewValidator" />
+					<!-- receptor del string de error de validacion. -->
+		     		<p:message id="dniMsg"  for="dni"/> 
+		     	</td>    
+		     </tr>            
+	         <tr>
+		     	<td><p:commandButton id="addUser" value="Add" action="#{userNewBean.saveUser}" update="@form" /></td>
+		     	<td><p:commandButton id="reset" value="Reset" action="#{userNewBean.reset}" /></td>
+		     </tr>   
+	     </table>
+     </h:form>     
+</h:body>
+</ui:composition>
