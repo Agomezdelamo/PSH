@@ -48,6 +48,7 @@
 	<context:component-scan base-package="com.otv.dao"/>
 	<context:component-scan base-package="com.otv.services"/>
 	<context:component-scan base-package="com.otv.controller"/>
+	<context:component-scan base-package="com.otv.utility"/>
 	<context:component-scan base-package="com.otv.controller.springBeans"/>
 
 

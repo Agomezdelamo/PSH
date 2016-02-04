@@ -20,48 +20,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.otv.constants.Constantes;
 import com.otv.constants.enumerados.RolesEnum;
 import com.otv.services.interfaces.RoleService;
+import com.otv.utility.DecoderBean;
 
-@Controller
+@ManagedBean
+@SessionScoped
 public class RequestManager {
 	
-	@Autowired
-	RoleService roleService;
-	
-	private StringBuilder page;
-	private String rolUrl;
-	private String redirectPage;
-	private Boolean isLoginComplete = false;
-
-	public String redirectToHome(int id, HttpServletRequest request) {
-		/* pila  ultimo en el primer lugar.*/
-		Stack<String> pila = new Stack<String>();
-		page = new StringBuilder("redirect:/");
-		rolUrl ="";
-		
-		//para usuario, me traigo al usuario de la base de datos para tenerlo en un command y redirijo a otra vista usuario
-		if(roleService.isUser(id)) {
-			System.out.println("soy usuario");
-			
-			rolUrl = RolesEnum.USUARIO.toString().toLowerCase();
-		}
-		//para admin, al usuario de la base de datos para tenerlo en un command y redirijo a otra vista admin
-		if(roleService.isAdmin(id)) {
-			System.out.println("soy admin");
-			
-			rolUrl = RolesEnum.ADMIN.toString().toLowerCase();
-		}
-
-		page.append(Constantes.JSFPAGES_RAIZ).append("/").append(rolUrl).append("/").append("home.jsf").append("?").append(Constantes.FACES_REDIRECT).append("=true").append("&")
-		.append(Constantes.PARAM_ID).append("=").append(id);
-		redirectPage = page.toString();
-		pila.push(redirectPage);
-		ponerEnSesion(Constantes.PARAM_PILA, pila, request);
-		
-		/* booleano para que apartir de ahora todas las redirecciones las maneje el método Redirecciona(String page) */
-		isLoginComplete = true;
-		
-		return redirectPage;
-	}
+	@ManagedProperty("#{decoderBean}")
+	DecoderBean decoderBean;
 	
 	/**
 	 * metodo REST que entra en juego cuando aparecen estos parametros.
@@ -169,16 +135,5 @@ public class RequestManager {
 		HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
 		return request.getAttribute(atributeName);
 	}
-	
-	
-	
 
-	public RoleService getRoleService() {
-		return roleService;
-	}
-
-	public void setRoleService(RoleService roleService) {
-		this.roleService = roleService;
-	}
-	
 }

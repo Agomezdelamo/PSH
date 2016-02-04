@@ -3,12 +3,14 @@ package com.otv.controller.springBeans;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Stack;
 
-import javax.faces.bean.ManagedProperty;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
+import org.jasypt.util.text.BasicTextEncryptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.stereotype.Controller;
@@ -21,9 +23,12 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.otv.constants.Constantes;
 import com.otv.constants.enumerados.CodigoRespuestaEnum;
+import com.otv.constants.enumerados.RolesEnum;
 import com.otv.model.User;
 import com.otv.preModel.command.LoginCommand;
 import com.otv.services.interfaces.LoginService;
+import com.otv.services.interfaces.RoleService;
+import com.otv.services.interfaces.SessionManager;
 import com.otv.services.interfaces.UserService;
 import com.otv.utility.ResultadoAccionLogin;
 
@@ -39,14 +44,26 @@ public class LoginControllerBean {
 	LoginService loginService;
 	
 	@Autowired
-	RequestManager requestManager;
-	
+	RoleService roleService;
+
 	//inyección de dependencias por nombre de spring
 	@Autowired
 	UserService userService;
 	
+	//inyección de dependencias por nombre de spring
+	@Autowired
+	SessionManager sessionManager;
+	
 	//inyeccion del usuario que si se loga correctamente se mete en sesión.
 	User userInSession;
+	
+	private StringBuilder page;
+	
+	private String rolUrl;
+	
+	private String redirectPage;
+	
+	private Boolean isLoginComplete = false;
 	
 	/**
 	 * Guarda la petición inicial (URL) antes de pasar por el interceptor de Spring Security
@@ -117,13 +134,54 @@ public class LoginControllerBean {
 		
 		if (resultCode.getCodigoRespuesta().equals(CodigoRespuestaEnum.OK)) {
 				userInSession = userService.getUserByUserName(username);
-				requestManager.ponerEnSesion("user", userInSession, request);
-				String paginaHome = requestManager.redirectToHome(userInSession.getId(), request);
+				
+				HttpSession session = request.getSession(true);
+				sessionManager.addUserToSession(userInSession, session);
+				String paginaHome = redirectToHome(userInSession.getId(), request);
 				return new ModelAndView(paginaHome);
 		}
 		return new ModelAndView(resultado);
 	}
 
+	public String redirectToHome(int id, HttpServletRequest request) {
+
+		/* pila  ultimo en el primer lugar.*/
+		Stack<String> pila = new Stack<String>();
+		page = new StringBuilder("redirect:/");
+		rolUrl ="";
+		
+		//para usuario, me traigo al usuario de la base de datos para tenerlo en un command y redirijo a otra vista usuario
+		if(roleService.isUser(id)) {
+			System.out.println("soy usuario");
+			
+			rolUrl = RolesEnum.USUARIO.toString().toLowerCase();
+		}
+		//para admin, al usuario de la base de datos para tenerlo en un command y redirijo a otra vista admin
+		if(roleService.isAdmin(id)) {
+			System.out.println("soy admin");
+			
+			rolUrl = RolesEnum.ADMIN.toString().toLowerCase();
+		}
+		
+		BasicTextEncryptor textEncryptor = new BasicTextEncryptor();
+		textEncryptor.setPassword(request.getSession(false).getId());
+		//Integer.toString(id) tambien valdria
+		String idEncode = textEncryptor.encrypt(String.valueOf(id));
+		
+		page.append(Constantes.JSFPAGES_RAIZ).append("/").append(rolUrl).append("/").append("home.jsf").append("?").append(Constantes.FACES_REDIRECT).append("=true").append("&")
+		.append(Constantes.PARAM_ID).append("=").append(idEncode);
+		redirectPage = page.toString();
+		pila.push(redirectPage);
+		//TODO: crear un metodo para poner en sesion cualquier cosa en session manager
+//		requestManager.ponerEnSesion(Constantes.PARAM_PILA, pila, request);
+		
+		/* booleano para que apartir de ahora todas las redirecciones las maneje el método Redirecciona(String page) */
+		isLoginComplete = true;
+		
+		return redirectPage;
+	}
+	
+	
 	public LoginService getLoginService() {
 		return loginService;
 	}
@@ -134,12 +192,4 @@ public class LoginControllerBean {
 	}
 
 
-	public RequestManager getRequestManager() {
-		return requestManager;
-	}
-
-
-	public void setRequestManager(RequestManager requestManager) {
-		this.requestManager = requestManager;
-	}
 }

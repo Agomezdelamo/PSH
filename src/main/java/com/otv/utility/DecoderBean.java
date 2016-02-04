@@ -2,16 +2,13 @@ package com.otv.utility;
 
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.net.URLEncoder;
 
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 
 import org.jasypt.util.text.BasicTextEncryptor;
-
-import com.otv.controller.springBeans.RequestManager;
-
+import org.springframework.stereotype.Controller;
 
 public class DecoderBean implements Serializable {
 
@@ -30,6 +27,7 @@ public class DecoderBean implements Serializable {
 	public DecoderBean() {
 		textEncryptor = new BasicTextEncryptor();
 		textEncryptor.setPassword(((HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false)).getId());
+
 	}
 
 	/**
